@@ -1,14 +1,14 @@
 // ==UserScript==
-// @name         Github 自用高速
-// @name:zh-CN   Github 自用高速
-// @name:zh-TW   Github 自用高速
-// @name:en      Github 
-// @version      2.5.29
-// @author       fly
-// @description  高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 自用 (☁)、添加 git clone 命令
-// @description:zh-CN  高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (自用)
-// @description:zh-TW  高速下載 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (自用)
-// @description:en  High-speed download of Git Clone/SSH, Release, Raw, Code(ZIP) and other files (Based on public welfare), (自用)
+// @name         Github 增强 - 高速下载
+// @name:zh-CN   Github 增强 - 高速下载
+// @name:zh-TW   Github 增強 - 高速下載
+// @name:en      Github Enhancement - High Speed Download
+// @version      2.5.24
+// @author       X.I.U
+// @description  高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、项目列表单文件快捷下载 (☁)、添加 git clone 命令
+// @description:zh-CN  高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、项目列表单文件快捷下载 (☁)
+// @description:zh-TW  高速下載 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (公益加速)、項目列表單文件快捷下載 (☁)
+// @description:en  High-speed download of Git Clone/SSH, Release, Raw, Code(ZIP) and other files (Based on public welfare), project list file quick download (☁)
 // @match        *://github.com/*
 // @match        *://hub.incept.pw/*
 // @match        *://hub.nuaa.cf/*
@@ -28,27 +28,41 @@
 // @sandbox      JavaScript
 // @license      GPL-3.0 License
 // @run-at       document-end
-
+// @namespace    https://greasyfork.org/scripts/412245
+// @supportURL   https://github.com/XIU2/UserScript
+// @homepageURL  https://github.com/XIU2/UserScript
+// @downloadURL https://update.greasyfork.org/scripts/412245/Github%20%E5%A2%9E%E5%BC%BA%20-%20%E9%AB%98%E9%80%9F%E4%B8%8B%E8%BD%BD.user.js
+// @updateURL https://update.greasyfork.org/scripts/412245/Github%20%E5%A2%9E%E5%BC%BA%20-%20%E9%AB%98%E9%80%9F%E4%B8%8B%E8%BD%BD.meta.js
 // ==/UserScript==
 
 (function() {
     'use strict';
-    var backColor = '#ffffff', fontColor = '#be0000', menu_rawFast = GM_getValue('xiu2_menu_raw_fast'), menu_rawFast_ID, menu_rawDownLink_ID, menu_gitClone_ID, menu_feedBack_ID;
+    var backColor = '#ffffff', fontColor = '#888888', menu_rawFast = GM_getValue('xiu2_menu_raw_fast'), menu_rawFast_ID, menu_rawDownLink_ID, menu_gitClone_ID, menu_feedBack_ID;
     const download_url_us = [
         ['https://dl.sdkjf.site/https://github.com', '自用', '[ Cloudflare CDN] -  提供'],
-        //['https://dl.sdkjf.site/https://github.com', '自用', '[ Cloudflare CDN] -  提供'],
-        
+        //['https://gh.api.99988866.xyz/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [hunshcn/gh-proxy] 提供'], // 官方演示站用的人太多了
+        ['https://gh.ddlc.top/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [@mtr-static-official] 提供'],
+        //['https://gh2.yanqishui.work/https://github.com', '美国', '[美国 Cloudflare CDN] - 该公益加速源由 [@HongjieCN] 提供'], // 解析错误
+
+    ], download_url = [
+        ['https://dl.sdkjf.site', '自用', '[ Cloudflare CDN] -  提供'],
+        ['https://mirror.ghproxy.com/https://github.com', '韩国', '[日本、韩国、德国等]（CDN 不固定） - 该公益加速源由 [ghproxy] 提供&#10;&#10;提示：希望大家尽量多使用前面的美国节点（每次随机 负载均衡），&#10;避免流量都集中到亚洲公益节点，减少成本压力，公益才能更持久~'],
+        ['https://ghproxy.net/https://github.com', '日本', '[日本 大阪] - 该公益加速源由 [ghproxy] 提供&#10;&#10;提示：希望大家尽量多使用前面的美国节点（每次随机 负载均衡），&#10;避免流量都集中到亚洲公益节点，减少成本压力，公益才能更持久~'],
+        ['https://kkgithub.com', '香港', '[中国香港、日本、新加坡等] - 该公益加速源由 [help.kkgithub.com] 提供&#10;&#10;提示：希望大家尽量多使用前面的美国节点（每次随机 4 个来负载均衡），&#10;避免流量都集中到亚洲公益节点，减少成本压力，公益才能更持久~'],
+        //['https://download.incept.pw', '香港', '[中国香港] - 该公益加速源由 [FastGit 群组成员] 提供&#10;&#10;提示：希望大家尽量多使用前面的美国节点（每次随机 4 个来负载均衡），&#10;避免流量都集中到亚洲公益节点，减少成本压力，公益才能更持久~'] // ERR_SSL_PROTOCOL_ERROR
     ], clone_url = [
         ['https://dl.sdkjf.site/https://github.com', '自用', '[ Cloudflare CDN] -  提供'],
-        ['https://mirror.ghproxy.com/https://github.com', '韩国', '[日本、韩国、德国等]（CDN 不固定） - 该公益加速源由 [ghproxy] 提供&#10;&#10; - 缓存：无（或时间很短）'],
+        ['https://kkgithub.com', '香港', '[中国香港、日本、新加坡等] - 该公益加速源由 [help.kkgithub.com] 提供&#10;&#10; - 缓存：无（或时间很短）'],
+        ['https://hub.incept.pw', '香港', '[中国香港、美国] - 该公益加速源由 [FastGit 群组成员] 提供'],
 
     ], clone_ssh_url = [
         ['ssh://git@ssh.github.com:443/', 'Github 原生', '[日本、新加坡等] - Github 官方提供的 443 端口的 SSH（依然是 SSH 协议），适用于限制访问 22 端口的网络环境'],
         ['git@ssh.fastgit.org:', '香港', '[中国 香港] - 该公益加速源由 [FastGit] 提供']
-        //['git@git.zhlh6.cn:', '美国', '[美国 洛杉矶]'] // 挂了
+
     ], raw_url = [
-        ['https://dl.sdkjf.site', '自用', '[ Cloudflare CDN] -  提供'],
+        ['https://dl.sdkjf.site/https://raw.githubusercontent.com', '自用', '[ Cloudflare CDN] -  提供'],
         ['https://mirror.ghproxy.com/https://raw.githubusercontent.com', '韩国', '[日本、韩国、德国等]（CDN 不固定） - 该公益加速源由 [ghproxy] 提供&#10;&#10; - 缓存：无（或时间很短）'],
+
 
     ], svg = [
         '<svg class="octicon octicon-cloud-download" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path d="M9 12h2l-3 3-3-3h2V7h2v5zm3-8c0-.44-.91-3-4.5-3C5.08 1 3 2.92 3 5 1.02 5 0 6.52 0 8c0 1.53 1 3 3 3h3V9.7H3C1.38 9.7 1.3 8.28 1.3 8c0-.17.05-1.7 1.7-1.7h1.3V5c0-1.39 1.56-2.7 3.2-2.7 2.55 0 3.13 1.55 3.2 1.8v1.2H12c.81 0 2.7.22 2.7 2.2 0 2.09-2.25 2.2-2.7 2.2h-2V11h2c2.08 0 4-1.16 4-3.5C16 5.06 14.08 4 12 4z"></path></svg>'
