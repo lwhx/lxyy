@@ -3,7 +3,7 @@
 // @name:zh-CN   Github 自用高速
 // @name:zh-TW   Github 自用高速
 // @name:en      Github 
-// @version      2.5.25
+// @version      2.5.29
 // @author       fly
 // @description  高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 自用 (☁)、添加 git clone 命令
 // @description:zh-CN  高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (自用)
