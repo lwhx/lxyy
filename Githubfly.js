@@ -40,7 +40,7 @@
         ['https://dl.sdkjf.site/https://github.com', '自用本', '[自用] - 该公益加速源由 自用'],
 
     ], clone_url = [
-        ['https://dl.sdkjf.site', '自用', '[中国 自用] - 该公益加速源由 [GitClone] '],
+        ['https://dl.sdkjf.site/https://github.com', '自用', '[中国 自用] - 该公益加速源由 [GitClone] '],
 
     ], clone_ssh_url = [
         ['ssh://git@ssh.github.com:443/', 'Github 原生', '[日本、新加坡等] - Github 官方提供的 443 端口的 SSH（依然是 SSH 协议），适用于限制访问 22 端口的网络环境'],
