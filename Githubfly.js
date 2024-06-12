@@ -4,7 +4,7 @@
 // @name:zh-TW   Github 自用高速
 // @name:en      Github 
 // @version      2.5.24
-// @author       X.I.U
+// @author       X.I.U.11
 // @description  高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 自用 (☁)、添加 git clone 命令
 // @description:zh-CN  高速下载 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (自用)
 // @description:zh-TW  高速下載 Git Clone/SSH、Release、Raw、Code(ZIP) 等文件 (自用)
